@@ -34,6 +34,14 @@ POST to `/analyze` with:
 {"text": "Apple is buying a startup in the U.K."}
 ```
 
+POST to `/translate` with:
+
+```json
+{"text": "Hello world", "target_language": "es"}
+```
+
+GET `/languages` to see supported language codes.
+
 ### Test
 
 ```bash

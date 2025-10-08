@@ -29,3 +29,16 @@ class NLPAnalysisOut(BaseModel):
     entities: List[EntityOut]
 
 
+class TranslationInput(BaseModel):
+    text: str
+    target_language: str 
+
+
+class TranslationOut(BaseModel):
+    original_text: str
+    translated_text: str
+    source_language: str
+    target_language: str
+    confidence: float
+
+

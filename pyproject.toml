@@ -9,6 +9,7 @@ dependencies = [
     "uvicorn[standard]>=0.30.0",
     "spacy>=3.7.0",
     "pydantic>=2.7.0",
+    "googletrans",
     "en-core-web-sm",
     "en-core-web-trf",
 ]
