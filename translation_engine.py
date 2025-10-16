@@ -27,6 +27,7 @@ def translate_text(text: str, target_language: str) -> TranslationOut:
         raise ValueError("Text cannot be empty")
     
     # Validate target language
+    
     supported_langs = get_supported_languages()
     if target_language not in supported_langs:
         raise ValueError(f"Unsupported language code: {target_language}")

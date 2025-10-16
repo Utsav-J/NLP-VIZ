@@ -29,6 +29,14 @@ class NLPAnalysisOut(BaseModel):
     entities: List[EntityOut]
 
 
+class POSAnalysisOut(BaseModel):
+    tokens: List[TokenOut]
+
+
+class NERAnalysisOut(BaseModel):
+    entities: List[EntityOut]
+
+
 class TranslationInput(BaseModel):
     text: str
     target_language: str 

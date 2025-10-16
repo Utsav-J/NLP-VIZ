@@ -5,7 +5,7 @@ from typing import Any, List
 import spacy
 from spacy.language import Language
 
-from models import NLPAnalysisOut, TokenOut, EntityOut
+from models import NLPAnalysisOut, TokenOut, EntityOut, POSAnalysisOut, NERAnalysisOut
 
 
 _POS_NLP_SINGLETON: Language | None = None
@@ -77,5 +77,46 @@ def analyze_text(text: str) -> NLPAnalysisOut:
         )
 
     return NLPAnalysisOut(tokens=tokens, entities=entities)
+
+
+def analyze_pos(text: str) -> POSAnalysisOut:
+    """Analyze text for POS tagging using TRF model"""
+    pos_nlp = get_pos_nlp()
+    pos_doc = pos_nlp(text)
+
+    tokens: List[TokenOut] = []
+    for tok in pos_doc:
+        tokens.append(
+            TokenOut(
+                text=tok.text,
+                pos=tok.pos_,
+                tag=tok.tag_,
+                lemma=tok.lemma_,
+                dep=tok.dep_,
+                start=tok.idx,
+                end=tok.idx + len(tok.text),
+            )
+        )
+
+    return POSAnalysisOut(tokens=tokens)
+
+
+def analyze_ner(text: str) -> NERAnalysisOut:
+    """Analyze text for Named Entity Recognition using small model"""
+    ner_nlp = get_ner_nlp()
+    ner_doc = ner_nlp(text)
+
+    entities: List[EntityOut] = []
+    for ent in ner_doc.ents:
+        entities.append(
+            EntityOut(
+                text=ent.text,
+                label=ent.label_,
+                start=ent.start_char,
+                end=ent.end_char,
+            )
+        )
+
+    return NERAnalysisOut(entities=entities)
 
 
