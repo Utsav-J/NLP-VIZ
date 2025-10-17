@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException
 from typing import Dict
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
-from models import TextInput, NLPAnalysisOut, TranslationInput, TranslationOut, POSAnalysisOut, NERAnalysisOut
-from nlp_engine import analyze_text, analyze_pos, analyze_ner
+from models import TextInput, NLPAnalysisOut, TranslationInput, TranslationOut, POSAnalysisOut, NERAnalysisOut, DependencyParseOut, ConstituencyParseOut, CFGParseOut, GeminiCFGParseOut, SemanticRoleOut
+from nlp_engine import analyze_text, analyze_pos, analyze_ner, analyze_dependency, analyze_constituency, analyze_cfg, analyze_cfg_using_gemini, analyze_semantic_roles
 from translation_engine import translate_text, get_supported_languages
 
 app = FastAPI(title="NLP Analysis API", version="0.1.0")
@@ -34,6 +34,36 @@ def pos_tagging(input_data: TextInput) -> POSAnalysisOut:
 def named_entity_recognition(input_data: TextInput) -> NERAnalysisOut:
     """Analyze text for Named Entity Recognition only using small model"""
     return analyze_ner(input_data.text)
+
+
+@app.post("/dependency", response_model=DependencyParseOut)
+def dependency_parse(input_data: TextInput) -> DependencyParseOut:
+    """Analyze dependency parsing for a single sentence and return visual diagram"""
+    return analyze_dependency(input_data.text)
+
+
+@app.post("/constituency", response_model=ConstituencyParseOut)
+def constituency_parse(input_data: TextInput) -> ConstituencyParseOut:
+    """Analyze constituency parsing for a single sentence and return tree structure"""
+    return analyze_constituency(input_data.text)
+
+
+@app.post("/cfg", response_model=CFGParseOut)
+def cfg_parse(input_data: TextInput) -> CFGParseOut:
+    """Parse sentence using Context-Free Grammar (CFG) rules"""
+    return analyze_cfg(input_data.text)
+
+
+@app.post("/cfg-gemini", response_model=GeminiCFGParseOut)
+def cfg_parse_gemini(input_data: TextInput) -> GeminiCFGParseOut:
+    """Generate CFG parse tree in Mermaid format using Gemini AI"""
+    return analyze_cfg_using_gemini(input_data.text)
+
+
+@app.post("/semantic", response_model=SemanticRoleOut)
+def semantic_role_analysis(input_data: TextInput) -> SemanticRoleOut:
+    """Analyze semantic roles (who did what to whom) using Gemini AI"""
+    return analyze_semantic_roles(input_data.text)
 
 
 @app.post("/translate", response_model=TranslationOut)
