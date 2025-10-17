@@ -3,7 +3,7 @@ from typing import Dict
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from models import TextInput, NLPAnalysisOut, TranslationInput, TranslationOut, POSAnalysisOut, NERAnalysisOut, DependencyParseOut, ConstituencyParseOut, CFGParseOut, GeminiCFGParseOut, SemanticRoleOut
-from nlp_engine import analyze_text, analyze_pos, analyze_ner, analyze_dependency, analyze_constituency, analyze_cfg, analyze_cfg_using_gemini, analyze_semantic_roles
+from nlp_engine import analyze_text, analyze_pos, analyze_ner, analyze_dependency,get_ai_insights, analyze_constituency, analyze_cfg, analyze_cfg_using_gemini, analyze_semantic_roles
 from translation_engine import translate_text, get_supported_languages
 
 app = FastAPI(title="NLP Analysis API", version="0.1.0")
@@ -14,6 +14,9 @@ app.add_middleware(
         allow_methods=["*"],
         allow_headers=["*"],
 )
+
+
+
 @app.get("/")
 def root():
     return {"message": "NLP Analysis API is running"}
@@ -59,6 +62,9 @@ def cfg_parse_gemini(input_data: TextInput) -> GeminiCFGParseOut:
     """Generate CFG parse tree in Mermaid format using Gemini AI"""
     return analyze_cfg_using_gemini(input_data.text)
 
+@app.post("/ai-help")
+def get_ai_help(input_data:TextInput):
+    return get_ai_insights(input_data.text)
 
 @app.post("/semantic", response_model=SemanticRoleOut)
 def semantic_role_analysis(input_data: TextInput) -> SemanticRoleOut:

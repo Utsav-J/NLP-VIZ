@@ -15,6 +15,35 @@ gemini_client = Client(api_key=os.getenv("GEMINI_API_KEY"))
 _POS_NLP_SINGLETON: Language | None = None
 _NER_NLP_SINGLETON: Language | None = None
 
+def get_ai_insights(result:str):
+    try:
+        prompt=f"""
+You are a subject matter expert at NLP.
+You will be given an output of an NLP problem like POS Tagging or NER.
+Given the results, your job is to justify as to why those results were returned
+Be brief but cover all ground.
+Also respond in such a tone that you are helping out a student
+Here is the result:
+{result}
+        """
+        response = gemini_client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt,
+            config={
+                "response_mime_type": "application/json",
+            }
+        )
+        
+        # Parse the response
+        if response.text:
+            return response.text
+        else:
+            raise ValueError("Empty response from Gemini")
+        
+    except Exception as e:
+        # Return error with empty data
+        return f"Error generating semantic role analysis with Gemini: {str(e)}"
+        
 
 def get_pos_nlp() -> Language:
     """Get TRF model for POS tagging (better accuracy)"""
@@ -435,7 +464,7 @@ Return:
 
         # Use Gemini with structured output (Pydantic model)
         response = gemini_client.models.generate_content(
-            model="gemini-2.0-flash-exp",
+            model="gemini-2.5-flash",
             contents=prompt,
             config={
                 "response_mime_type": "application/json",
