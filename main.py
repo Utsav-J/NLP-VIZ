@@ -15,17 +15,9 @@ app.add_middleware(
         allow_headers=["*"],
 )
 
-
-
 @app.get("/")
 def root():
     return {"message": "NLP Analysis API is running"}
-
-@app.post("/analyze", response_model=NLPAnalysisOut)
-def analyze(input_data: TextInput) -> NLPAnalysisOut:
-    """Analyze text for both POS tagging and NER (combined endpoint - kept for backward compatibility)"""
-    return analyze_text(input_data.text)
-
 
 @app.post("/pos", response_model=POSAnalysisOut)
 def pos_tagging(input_data: TextInput) -> POSAnalysisOut:
@@ -43,18 +35,6 @@ def named_entity_recognition(input_data: TextInput) -> NERAnalysisOut:
 def dependency_parse(input_data: TextInput) -> DependencyParseOut:
     """Analyze dependency parsing for a single sentence and return visual diagram"""
     return analyze_dependency(input_data.text)
-
-
-@app.post("/constituency", response_model=ConstituencyParseOut)
-def constituency_parse(input_data: TextInput) -> ConstituencyParseOut:
-    """Analyze constituency parsing for a single sentence and return tree structure"""
-    return analyze_constituency(input_data.text)
-
-
-@app.post("/cfg", response_model=CFGParseOut)
-def cfg_parse(input_data: TextInput) -> CFGParseOut:
-    """Parse sentence using Context-Free Grammar (CFG) rules"""
-    return analyze_cfg(input_data.text)
 
 
 @app.post("/cfg-gemini", response_model=GeminiCFGParseOut)
